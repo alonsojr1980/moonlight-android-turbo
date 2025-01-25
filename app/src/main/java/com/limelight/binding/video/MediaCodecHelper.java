@@ -505,9 +505,11 @@ public class MediaCodecHelper {
 
             // If this decoder officially supports FEATURE_LowLatency, we will just use that alone
             // for try 0. Otherwise, we'll include it as best effort with other options.
-            if (decoderSupportsAndroidRLowLatency(decoderInfo, videoFormat.getString(MediaFormat.KEY_MIME))) {
-                return true;
-            }
+            //if (decoderSupportsAndroidRLowLatency(decoderInfo, videoFormat.getString(MediaFormat.KEY_MIME))) {
+            //    return true;
+            //}
+
+            // ALONSOJR1980: "low-latency" is not enough, continue to add specific extensions
         }
 
         if (tryNumber < 2 &&
@@ -531,7 +533,7 @@ public class MediaCodecHelper {
 
         if (tryNumber < 3) {
             if (MediaCodecHelper.decoderSupportsMaxOperatingRate(decoderInfo.getName())) {
-                videoFormat.setInteger(MediaFormat.KEY_OPERATING_RATE, Short.MAX_VALUE);
+                //videoFormat.setInteger(MediaFormat.KEY_OPERATING_RATE, Short.MAX_VALUE); //ALONSOJR1980: KEY_OPERATING_RATE doesn't make sense because KEY_FRAME_RATE is already set
                 setNewOption = true;
             }
             else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -557,11 +559,12 @@ public class MediaCodecHelper {
                 //
                 // We will first try both, then try vendor.qti-ext-dec-low-latency.enable alone if that fails
                 if (tryNumber < 4) {
-                    videoFormat.setInteger("vendor.qti-ext-dec-picture-order.enable", 1);
+                    videoFormat.setInteger("vendor.qti-ext-dec-picture-order.enable", 1); //ALONSOJR1980: 0 is better for latency
                     setNewOption = true;
                 }
                 if (tryNumber < 5) {
                     videoFormat.setInteger("vendor.qti-ext-dec-low-latency.enable", 1);
+                    videoFormat.setInteger("vendor.qti-ext-output-sw-fence-enable.value", 1); //ALONSOJR1980: latency-wise, this is the most important flag for Snapdragon 8 gen 2
                     setNewOption = true;
                 }
             }

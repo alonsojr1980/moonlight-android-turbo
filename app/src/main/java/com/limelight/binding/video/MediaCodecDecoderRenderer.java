@@ -473,7 +473,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer implements C
 
         // Avoid setting KEY_FRAME_RATE on Lollipop and earlier to reduce compatibility risk
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, refreshRate);
+            videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, prefs.fps); // ALONSOJR1980: FPS is better REFRESHRATE because framerate can be unlocked
         }
 
         // Populate keys for adaptive playback
